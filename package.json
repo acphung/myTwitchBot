@@ -1,0 +1,15 @@
+{
+    "name": "mytwitchbot",
+    "version": "1.0.0",
+    "description": "This is a test twitch bot",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "acphung",
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^6.1.0",
+        "twitch-js": "^1.2.17"
+    }
+}
