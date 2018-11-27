@@ -1,3 +1,10 @@
+/*** Resources ***/
+/*
+ * https: //dev.twitch.tv/docs/irc/
+ * https: //docs.tmijs.org/v1.2.1/index.html
+ * https: //github.com/twitch-devs/twitch-js/tree/master
+ */
+
 const TwitchJS = require("twitch-js");
 require('dotenv').config();
 
@@ -30,8 +37,18 @@ let options = {
 let client = new TwitchJS.client(options);
 client.connect();
 
-client.on("connected", (address, port) => {
-    client.action("zyfae", "myTwitchBot connected! This is a test bot I am playing around with.");
+/*
+ * On Connection Handler
+ */
+client.on("connected", (addr, port) => {
+    console.log(`Connected to address: ${addr}, port: ${port}`);
+});
+
+/*
+ * On Disconnected Handler
+ */
+client.on("disconnected", (reason) => {
+    console.log(`Disconnected: ${reason}`);
 });
 
 /*
@@ -69,11 +86,11 @@ function pepeSmoke(ch, user, params) {
     // console.log(params);
     // client.action(ch, `@${user.username}, You used the command !pepeSmoke.`);
     if (isEmpty(params)) {
-        client.action(ch, `@${user.username}, pepeSmoke has been typed ${pepeSmokeCounter} times.`);
+        client.say(ch, `@${user.username}, pepeSmoke has been typed ${pepeSmokeCounter} times.`);
     } else {
         if (params[0] === "reset") {
             pepeSmokeCounter = 0;
-            client.action(ch, "The pepeSmoke counter has been resetted!");
+            client.say(ch, "Resetting pepeSmoke Counter!");
         }
     }
 }
@@ -82,3 +99,14 @@ function pepeSmoke(ch, user, params) {
 function isEmpty(array) {
     return array.length === 0;
 }
+
+/*** Keyboard Interrupt Handler ***/
+process.on("SIGINT", () => {
+    client.disconnect().then(data => {
+        console.log(`Successfully disconnected from address: ${data[0]}, port: ${data[1]}.`);
+        process.exit();
+    }).catch(reason => {
+        console.log(`Disconnect Failed: ${reason}`);
+        process.exit(1);
+    });
+});
