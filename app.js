@@ -15,12 +15,13 @@ let cmds = {
 
 // Init Necessary Variables for Info Tracking
 let pepeSmokeRegex = new RegExp("pepeSmoke", "g");
-let pepeSmokeCounter = 0;
+// let pepeSmokeCounter = 0;
+let pepeSmokeCounters = {};
 
 // Init Options for Connecting to Twitch Chat
 let options = {
     options: {
-        debug: true
+        debug: false
     },
     connection: {
         cluster: "aws",
@@ -31,7 +32,7 @@ let options = {
         password: process.env.TWITCH_TOKEN
     },
     // channels: ["zyfae", "giantwaffle"]
-    channels: ["zyfae"]
+    channels: ["zyfae", "atastyoreo"]
 };
 
 let client = new TwitchJS.client(options);
@@ -52,6 +53,15 @@ client.on("disconnected", (reason) => {
 });
 
 /*
+ * Upon joining the channel, init variables
+ */
+client.on("join", (ch, user, self) => {
+    console.log(`Joined channel ${ch}`);
+    if (pepeSmokeCounters[ch] === undefined) pepeSmokeCounters[ch] = 0;
+    console.log(`Init ${ch}'s pepeSmokeCounter: ${pepeSmokeCounters[ch]}`);
+});
+
+/*
  * Logs chat and perform commands when found.
  * If command is not found, track specified info
  * from chat.
@@ -69,9 +79,7 @@ client.on("chat", (ch, userstate, msg, self) => {
         let params = tokens.slice(1, tokens.length);
         cmd(ch, userstate, params);
     } else {
-        let matches = msg.match(pepeSmokeRegex);
-        if (matches === null || matches.length <= 0) return;
-        pepeSmokeCounter += matches.length;
+        incPepeSmoke(ch, msg);
     }
 });
 
@@ -83,14 +91,12 @@ client.on("chat", (ch, userstate, msg, self) => {
  * param given to the command.
  */
 function pepeSmoke(ch, user, params) {
-    // console.log(params);
-    // client.action(ch, `@${user.username}, You used the command !pepeSmoke.`);
     if (isEmpty(params)) {
-        client.say(ch, `@${user.username}, pepeSmoke has been typed ${pepeSmokeCounter} times.`);
+        client.say(ch, `@${user.username}, pepeSmoke has been typed ${pepeSmokeCounters[ch]} times.`);
     } else {
         if (params[0] === "reset") {
-            pepeSmokeCounter = 0;
-            client.say(ch, "Resetting pepeSmoke Counter!");
+            pepeSmokeCounters[ch] = 0;
+            client.say(ch, "The pepeSmoke Counter has been resetted!");
         }
     }
 }
@@ -98,6 +104,14 @@ function pepeSmoke(ch, user, params) {
 /*** Utility Functions ***/
 function isEmpty(array) {
     return array.length === 0;
+}
+
+function incPepeSmoke(ch, msg) {
+    let matches = msg.match(pepeSmokeRegex);
+    if (matches === null || matches.length <= 0) return;
+    pepeSmokeCounters[ch] += matches.length;
+    // pepeSmokeCounter += matches.length;
+    console.log(` *** ${ch}'s pepeSmokeCounter: ${pepeSmokeCounters[ch]}`);
 }
 
 /*** Keyboard Interrupt Handler ***/
