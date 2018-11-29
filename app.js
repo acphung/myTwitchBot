@@ -15,8 +15,7 @@ let cmds = {
 
 // Init Necessary Variables for Info Tracking
 let pepeSmokeRegex = new RegExp("pepeSmoke", "g");
-// let pepeSmokeCounter = 0;
-let pepeSmokeCounters = {};
+let counters = {};
 
 // Init Options for Connecting to Twitch Chat
 let options = {
@@ -57,8 +56,8 @@ client.on("disconnected", (reason) => {
  */
 client.on("join", (ch, user, self) => {
     console.log(`Joined channel ${ch}`);
-    if (pepeSmokeCounters[ch] === undefined) pepeSmokeCounters[ch] = 0;
-    console.log(`Init ${ch}'s pepeSmokeCounter: ${pepeSmokeCounters[ch]}`);
+    initCounters(ch);
+    console.log(`Init ${ch}'s pepeSmokeCounter: ${counters[ch]["pepeSmoke"]}`);
 });
 
 /*
@@ -92,10 +91,10 @@ client.on("chat", (ch, userstate, msg, self) => {
  */
 function pepeSmoke(ch, user, params) {
     if (isEmpty(params)) {
-        client.say(ch, `@${user.username}, pepeSmoke has been typed ${pepeSmokeCounters[ch]} times.`);
+        client.say(ch, `@${user.username}, pepeSmoke has been typed ${counters[ch]["pepeSmoke"]} times.`);
     } else {
         if (params[0] === "reset") {
-            pepeSmokeCounters[ch] = 0;
+            counters[ch]["pepeSmoke"] = 0;
             client.say(ch, "The pepeSmoke Counter has been resetted!");
         }
     }
@@ -109,9 +108,15 @@ function isEmpty(array) {
 function incPepeSmoke(ch, msg) {
     let matches = msg.match(pepeSmokeRegex);
     if (matches === null || matches.length <= 0) return;
-    pepeSmokeCounters[ch] += matches.length;
-    // pepeSmokeCounter += matches.length;
-    console.log(` *** ${ch}'s pepeSmokeCounter: ${pepeSmokeCounters[ch]}`);
+    counters[ch]["pepeSmoke"] += matches.length;
+    console.log(`${ch}'s pepeSmokeCounter: ${counters[ch]["pepeSmoke"]}`);
+}
+
+function initCounters(ch) {
+    counters[ch] = {
+        pepeSmoke: 0
+    };
+    console.log(counters[ch]["pepeSmoke"]);
 }
 
 /*** Keyboard Interrupt Handler ***/
