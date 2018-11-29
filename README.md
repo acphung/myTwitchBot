@@ -1,5 +1,6 @@
 # myTwitchBot
-This is a simple twitch bot that will run some basic command as of right now.
+This is a simple twitch bot that as of right now will track certain key words.
+The twitch bot functionality may expand in the feature as I play around with it.
 
 # ISSUES
-- As of right now, this bot only has a single global counter for pepeSmoke across all channels it is connected to
+- Currently there is no real big issues that I can spot
