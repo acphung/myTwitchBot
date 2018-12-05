@@ -6,6 +6,7 @@
  */
 
 const TwitchJS = require("twitch-js");
+const Counters = require("./my_modules/counters");
 require('dotenv').config();
 
 // Init Existing Commands
@@ -16,6 +17,8 @@ let cmds = {
 // Init Necessary Variables for Info Tracking
 let pepeSmokeRegex = new RegExp("pepeSmoke", "g");
 let counters = {};
+let chCounters = {};
+let wordList = ["pepeSmoke", "Pog"];
 
 // Init Options for Connecting to Twitch Chat
 let options = {
@@ -57,7 +60,6 @@ client.on("disconnected", (reason) => {
 client.on("join", (ch, user, self) => {
     console.log(`Joined channel ${ch}`);
     initCounters(ch);
-    console.log(`Init ${ch}'s pepeSmokeCounter: ${counters[ch]["pepeSmoke"]}`);
 });
 
 /*
@@ -91,10 +93,11 @@ client.on("chat", (ch, userstate, msg, self) => {
  */
 function pepeSmoke(ch, user, params) {
     if (isEmpty(params)) {
-        client.say(ch, `@${user.username}, pepeSmoke has been typed ${counters[ch]["pepeSmoke"]} times.`);
+        client.say(ch, `@${user.username}, pepeSmoke has been typed ${chCounters[ch].getValue("pepeSmoke")} times.`);
     } else {
         if (params[0] === "reset") {
-            counters[ch]["pepeSmoke"] = 0;
+            // counters[ch]["pepeSmoke"] = 0;
+            chCounters[ch].reset("pepeSmoke");
             client.say(ch, "The pepeSmoke Counter has been resetted!");
         }
     }
@@ -105,18 +108,23 @@ function isEmpty(array) {
     return array.length === 0;
 }
 
+function logObj(obj) {
+    console.log(JSON.parse(JSON.stringify(obj)));
+}
+
 function incPepeSmoke(ch, msg) {
     let matches = msg.match(pepeSmokeRegex);
     if (matches === null || matches.length <= 0) return;
-    counters[ch]["pepeSmoke"] += matches.length;
-    console.log(`${ch}'s pepeSmokeCounter: ${counters[ch]["pepeSmoke"]}`);
+    // counters[ch]["pepeSmoke"] += matches.length;
+    chCounters[ch].increment("pepeSmoke", matches.length);
+    // console.log(`${ch}'s pepeSmokeCounter: ${counters[ch]["pepeSmoke"]}`);
+    console.log(`${ch}'s pepeSmokeCounter: ${chCounters[ch].getValue("pepeSmoke")}`);
 }
 
 function initCounters(ch) {
-    counters[ch] = {
-        pepeSmoke: 0
-    };
-    console.log(counters[ch]["pepeSmoke"]);
+    chCounters[ch] = new Counters(wordList);
+    console.log(`${ch}'s Counters: `);
+    logObj(chCounters[ch]);
 }
 
 /*** Keyboard Interrupt Handler ***/
