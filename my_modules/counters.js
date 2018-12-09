@@ -1,8 +1,12 @@
 class Counters {
     constructor(wordList = []) {
         this.counters = {};
-        for (let i = 0; i < wordList.length; i++) {
-            this.counters[wordList[i]] = 0;
+        if (Array.isArray(wordList)) {
+            for (let i = 0; i < wordList.length; i++) {
+                this.counters[wordList[i]] = 0;
+            }
+        } else if (typeof wordList === "object") {
+            this.counters = wordList.counters;
         }
     }
 

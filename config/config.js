@@ -11,5 +11,5 @@ module.exports = {
         username: process.env.TWITCH_USER,
         password: process.env.TWITCH_TOKEN
     },
-    channels: ["#zyfae", "#atastyoreo"]
+    channels: ["zyfae", "atastyoreo"]
 };
