@@ -6,6 +6,7 @@
  */
 
 const TwitchJS = require("twitch-js");
+const options = require("./config");
 const Counters = require("./my_modules/counters");
 require('dotenv').config();
 
@@ -19,21 +20,21 @@ let pepeSmokeRegex = new RegExp("pepeSmoke", "g");
 let chCounters = {};
 let wordList = ["pepeSmoke", "Pog"];
 
-// Init Options for Connecting to Twitch Chat
-let options = {
-    options: {
-        debug: true
-    },
-    connection: {
-        cluster: "aws",
-        reconnect: true
-    },
-    identity: {
-        username: process.env.TWITCH_USER,
-        password: process.env.TWITCH_TOKEN
-    },
-    channels: ["#zyfae", "#atastyoreo"]
-};
+// // Init Options for Connecting to Twitch Chat
+// let options = {
+//     options: {
+//         debug: true
+//     },
+//     connection: {
+//         cluster: "aws",
+//         reconnect: true
+//     },
+//     identity: {
+//         username: process.env.TWITCH_USER,
+//         password: process.env.TWITCH_TOKEN
+//     },
+//     channels: ["#zyfae", "#atastyoreo"]
+// };
 
 let client = new TwitchJS.client(options);
 client.connect();
