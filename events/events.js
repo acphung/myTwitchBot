@@ -1,12 +1,15 @@
 const cmds = require("../commands");
-const Counters = require("../my_modules/counters");
 let pepeSmokeRegex = new RegExp("pepeSmoke", "g");
 
 let chCounters = {};
 let wordList = ["pepeSmoke", "Pog"];
 
 function initCounters(ch) {
-    chCounters[ch] = new Counters(wordList);
+    counters = {};
+    for (word of wordList) {
+        counters[word] = 0;
+    }
+    chCounters[ch].counters = counters;
     console.log(`${ch}'s Counters: `);
     logObj(chCounters[ch]);
 }
@@ -14,8 +17,8 @@ function initCounters(ch) {
 function incPepeSmoke(ch, msg) {
     let matches = msg.match(pepeSmokeRegex);
     if (matches === null || matches.length <= 0) return;
-    chCounters[ch].increment("pepeSmoke", matches.length);
-    console.log(`${ch}'s pepeSmokeCounter: ${chCounters[ch].getValue("pepeSmoke")}`);
+    chCounters[ch].counters["pepeSmoke"] += matches.length;
+    console.log(`${ch}'s pepeSmokeCounter: ${chCounters[ch].counters["pepeSmoke"]}`);
 }
 
 function logObj(obj) {
@@ -44,6 +47,7 @@ module.exports = {
         client.on("join", (ch, user, self) => {
             console.log(`Joined channel ${ch}`);
             if (chCounters[ch] === undefined) {
+                chCounters[ch] = {};
                 initCounters(ch);
             }
         });

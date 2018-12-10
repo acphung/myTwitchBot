@@ -1,8 +1,4 @@
-// let cmds = {
-//     pepeSmoke
-// };
-let utils = require("../utils")
-let Counters = require("../my_modules/counters");
+const utils = require("../utils")
 
 module.exports = {
     /*
@@ -12,12 +8,10 @@ module.exports = {
      */
     pepeSmoke: (client, ch, chCounters, user, params) => {
         if (utils.isEmpty(params)) {
-            let counters = new Counters(chCounters[ch]);
-            console.log(counters);
-            client.say(ch, `@${user.username}, pepeSmoke has been typed ${chCounters[ch].getValue("pepeSmoke")} times.`);
+            client.say(ch, `@${user.username}, pepeSmoke has been typed ${chCounters[ch].counters["pepeSmoke"]} times.`);
         } else {
             if (params[0] === "reset") {
-                chCounters[ch].reset("pepeSmoke");
+                chCounters[ch].counters["pepeSmoke"] = 0;
                 client.say(ch, "The pepeSmoke Counter has been resetted!");
             }
         }
